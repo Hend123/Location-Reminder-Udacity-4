@@ -34,6 +34,9 @@
     <string name="err_enter_title">Please enter title</string>
     <string name="err_select_location">Please select location</string>
     <string name="google_maps_key">AIzaSyAy-jpTVMqODk8QSnywDunZAaJmX5Arass</string>
+    <!--    Geofence Status Strings-->
+    <string name="geofences_added">Clue Geofence added.</string>
+    <string name="geofences_removed">Geofences removed.</string>
 
     <!-- Error strings -->
     <string name="geofence_unknown_error">Unknown error: the Geofence service is not available now.</string>
@@ -41,4 +44,5 @@
     <string name="geofence_too_many_geofences">Your app has registered too many geofences.</string>
     <string name="geofence_too_many_pending_intents">You have provided too many PendingIntents to the addGeofences() call.</string>
     <string name="error_adding_geofence">Error Happened, Can\'t Add Geofence</string>
+    <string name="please_select_a_point_of_interest_poi_on_the_map_to_create_a_reminder">please select a point of interest (POI) on the map to create a reminder.</string>
 </resources>

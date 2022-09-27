@@ -3,6 +3,7 @@ package com.udacity.project4.authentication
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -43,7 +44,9 @@ class AuthenticationActivity : AppCompatActivity() {
         }
 //          TODO: If the user was authenticated, send him to RemindersActivity
         observeFirebaseUserState()
-
+        onBackPressedDispatcher.addCallback(this) {
+           finish()
+        }
 //          TODO: a bonus is to customize the sign in flow to look nice using :
         //https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md#custom-layout
 

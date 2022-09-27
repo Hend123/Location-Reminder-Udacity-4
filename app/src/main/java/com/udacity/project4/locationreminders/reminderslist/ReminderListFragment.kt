@@ -1,8 +1,13 @@
 package com.udacity.project4.locationreminders.reminderslist
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.*
+import androidx.activity.addCallback
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
 import com.firebase.ui.auth.AuthUI
@@ -20,6 +25,7 @@ class ReminderListFragment : BaseFragment() {
     //use Koin to retrieve the ViewModel instance
     override val _viewModel: RemindersListViewModel by viewModel()
     private lateinit var binding: FragmentRemindersBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -47,7 +53,11 @@ class ReminderListFragment : BaseFragment() {
         binding.addReminderFAB.setOnClickListener {
             navigateToAddReminder()
         }
+//        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+//            findNavController().popBackStack(R.id.reminderListFragment, false)
+//        }
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -77,8 +87,8 @@ class ReminderListFragment : BaseFragment() {
             R.id.logout -> {
 //                TODO: add the logout implementation
                 AuthUI.getInstance().signOut(requireContext())
-               // startActivity(Intent(activity, AuthenticationActivity::class.java))
-                findNavController().popBackStack()
+                startActivity(Intent(activity, AuthenticationActivity::class.java))
+               // findNavController().popBackStack(R.id.authenticationActivity2,false)
             }
         }
         return super.onOptionsItemSelected(item)
