@@ -32,6 +32,7 @@ class SaveReminderFragment : BaseFragment() {
     override val _viewModel: SaveReminderViewModel by inject()
     private lateinit var binding: FragmentSaveReminderBinding
     private lateinit var geofencingClient: GeofencingClient
+    private lateinit var reminderDataItem:ReminderDataItem
     val GEOFENCE_EXPIRATION_IN_MILLISECONDS: Long = TimeUnit.HOURS.toMillis(1)
     // A PendingIntent for the Broadcast Receiver that handles geofence transitions.
     private val geofencePendingIntent: PendingIntent by lazy {
@@ -85,18 +86,86 @@ class SaveReminderFragment : BaseFragment() {
 //            TODO: use the user entered reminder details to:
 //             1) add a geofencing request
 //             2) save the reminder to the local db
-            _viewModel.validateAndSaveReminder(
-                ReminderDataItem(
-                    title,
-                    description,
-                    location,
-                    latitude,
-                    longitude
-                )
+            reminderDataItem =  ReminderDataItem(
+                title,
+                description,
+                location,
+                latitude,
+                longitude
             )
+            _viewModel.validateAndSaveReminder(
+               reminderDataItem
+            )
+            if(reminderDataItem.title !=null && reminderDataItem.location != null){
+                addGeofence()
+            }
+
         }
     }
 
+    private fun addGeofence() {
+// Build the Geofence Object
+        val currentGeofenceData = reminderDataItem
+        val geofence = Geofence.Builder()
+            // Set the request ID, string to identify the geofence.
+            .setRequestId(currentGeofenceData.id)
+            // Set the circular region of this geofence.
+            .setCircularRegion(
+                currentGeofenceData.latitude!!,
+                currentGeofenceData.longitude!!,
+                GEOFENCE_RADIUS_IN_METERS
+            )
+            // Set the expiration duration of the geofence. This geofence gets
+            // automatically removed after this period of time.
+            .setExpirationDuration(GEOFENCE_EXPIRATION_IN_MILLISECONDS)
+            // Set the transition types of interest. Alerts are only generated for these
+            // transition. We track entry and exit transitions in this sample.
+            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+            .build()
+
+        // Build the geofence request
+        val geofencingRequest = GeofencingRequest.Builder()
+            // The INITIAL_TRIGGER_ENTER flag indicates that geofencing service should trigger a
+            // GEOFENCE_TRANSITION_ENTER notification when the geofence is added and if the device
+            // is already inside that geofence.
+            .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+
+            // Add the geofences to be monitored by geofencing service.
+            .addGeofence(geofence)
+            .build()
+
+        // First, remove any existing geofences that use our pending intent
+        geofencingClient.removeGeofences(geofencePendingIntent)?.run {
+            // Regardless of success/failure of the removal, add the new geofence
+            addOnCompleteListener {
+                // Add the new geofence request with the new geofence
+                geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
+                    addOnSuccessListener {
+                        // Geofences added.
+                        Toast.makeText(
+                            requireContext(), R.string.geofences_added,
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                        Log.e("Add Geofence", geofence.requestId)
+                        // Tell the viewmodel that we've reached the end of the game and
+                        // activated the last "geofence" --- by removing the Geofence.
+//                        viewModel.geofenceActivated()
+                    }
+                    addOnFailureListener {
+                        // Failed to add geofences.
+                        Toast.makeText(
+                            requireContext(), R.string.geofences_not_added,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        if ((it.message != null)) {
+                            Log.w(TAG, it.message!!)
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     override fun onDestroy() {
         super.onDestroy()
