@@ -96,7 +96,7 @@ class SaveReminderFragment : BaseFragment() {
             _viewModel.validateAndSaveReminder(
                reminderDataItem
             )
-            if(reminderDataItem.title !=null && reminderDataItem.location != null){
+            if(_viewModel.validateEnteredData(reminderDataItem)){
                 addGeofence()
             }
 
@@ -141,25 +141,11 @@ class SaveReminderFragment : BaseFragment() {
                 // Add the new geofence request with the new geofence
                 geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
                     addOnSuccessListener {
-                        // Geofences added.
-                        Toast.makeText(
-                            requireContext(), R.string.geofences_added,
-                            Toast.LENGTH_SHORT
-                        )
-                            .show()
-                        Log.e("Add Geofence", geofence.requestId)
-                        // Tell the viewmodel that we've reached the end of the game and
-                        // activated the last "geofence" --- by removing the Geofence.
-//                        viewModel.geofenceActivated()
+                        Log.d(TAG, geofence.requestId)
                     }
                     addOnFailureListener {
-                        // Failed to add geofences.
-                        Toast.makeText(
-                            requireContext(), R.string.geofences_not_added,
-                            Toast.LENGTH_SHORT
-                        ).show()
                         if ((it.message != null)) {
-                            Log.w(TAG, it.message!!)
+                            Log.d(TAG, it.message!!)
                         }
                     }
                 }
