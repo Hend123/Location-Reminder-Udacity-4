@@ -2,13 +2,16 @@ package com.udacity.project4.locationreminders.geofence
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.core.app.JobIntentService
 import com.google.android.gms.location.Geofence
+import com.google.android.gms.location.GeofencingEvent
+import com.udacity.project4.R
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
-import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
+import com.udacity.project4.utils.errorMessage
 import com.udacity.project4.utils.sendNotification
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
@@ -36,13 +39,30 @@ class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
     override fun onHandleWork(intent: Intent) {
         //TODO: handle the geofencing transition events and
         // send a notification to the user when he enters the geofence area
+        val geofencingEvent = GeofencingEvent.fromIntent(intent)
+        if(geofencingEvent.hasError()){
+            val errorMessage = errorMessage(applicationContext,geofencingEvent.errorCode)
+            Log.d("test errorMessage",errorMessage)
+            return
+        }
         //TODO call @sendNotification
+        if(geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER){
+            Log.v("test geofence entered", applicationContext.getString(R.string.geofence_entered))
+            sendNotification(geofencingEvent.triggeringGeofences)
+        }
+
     }
 
     //TODO: get the request id of the current geofence
     private fun sendNotification(triggeringGeofences: List<Geofence>) {
-        val requestId = ""
-
+        val requestId = when {
+           triggeringGeofences.isNotEmpty() ->
+               triggeringGeofences[0].requestId
+            else -> {
+                Log.e("test noGeofence", "No Geofence Trigger Found! Abort mission!")
+                return
+            }
+        }
         //Get the local repository instance
         val remindersLocalRepository: ReminderDataSource by inject()
 //        Interaction to the repository has to be through a coroutine scope
