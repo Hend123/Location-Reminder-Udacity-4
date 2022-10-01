@@ -43,8 +43,7 @@ import org.koin.test.get
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
-// Extended Koin Test - embed autoclose @after method to close Koin after every test
-
+//E2E Test
 class RemindersActivityTest  :
     KoinTest {
     private lateinit var repository: ReminderDataSource
