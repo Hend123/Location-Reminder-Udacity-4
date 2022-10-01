@@ -6,10 +6,11 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
+import com.udacity.project4.locationreminders.data.dto.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.notNullValue
+import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
 import org.junit.Before
@@ -99,6 +100,16 @@ class RemindersDaoTest {
         // THEN - The loaded data size equals zero
         val reminders = database.reminderDao().getReminders()
         assertThat(reminders.size, `is`(0))
+    }
+
+    @Test
+    fun getReminder_returnError() = runBlocking {
+        //GIVEN - empty DB
+        database.reminderDao().deleteAllReminders()
+        //WHEN - get reminder1
+        val value = database.reminderDao().getReminderById(reminder1.id)
+        // THEN - check value with null
+        assertThat(value, `is`(nullValue()))
     }
 
 }
