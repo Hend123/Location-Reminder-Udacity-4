@@ -67,7 +67,7 @@ class RemindersListViewModelTest{
         assertThat(reminderListViewModel.showNoData.getOrAwaitValue(), `is` (true))
     }
     @Test
-    fun chechLoadReminders_loadsThreeReminders()= mainCoroutineRule.runBlockingTest {
+    fun checkLoadReminders_loadsThreeReminders()= mainCoroutineRule.runBlockingTest {
 
         //GIVEN - reminder1,2,3
         fakeDataSource.deleteAllReminders()
