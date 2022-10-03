@@ -35,7 +35,7 @@
     <string name="err_select_location">Please select location</string>
     <string name="google_maps_key">AIzaSyAy-jpTVMqODk8QSnywDunZAaJmX5Arass</string>
     <!--    Geofence Status Strings-->
-    <string name="geofences_added">Clue Geofence added.</string>
+    <string name="geofences_added">Geofence added.</string>
     <string name="geofences_removed">Geofences removed.</string>
 
     <!-- Error strings -->

@@ -97,11 +97,10 @@ class ReminderListFragment : BaseFragment() {
 //                TODO: add the logout implementation
                 AuthUI.getInstance().signOut(requireContext())
                 startActivity(Intent(activity, AuthenticationActivity::class.java))
-               // findNavController().popBackStack(R.id.authenticationActivity2,false)
+                activity?.finish()
             }
         }
         return super.onOptionsItemSelected(item)
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
