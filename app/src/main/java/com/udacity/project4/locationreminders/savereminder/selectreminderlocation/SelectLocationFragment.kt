@@ -202,6 +202,8 @@ class SelectLocationFragment : BaseFragment() {
             getLastLocation()
             map.setMyLocationEnabled(true)
         } else {
+            Toast.makeText(requireContext(), R.string.permission_denied_explanation,
+                Toast.LENGTH_SHORT).show()
             requestPermissions(
                 arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
                 REQUEST_LOCATION_PERMISSION
@@ -220,6 +222,20 @@ class SelectLocationFragment : BaseFragment() {
         if (requestCode == REQUEST_LOCATION_PERMISSION) {
             if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 enableMyLocation()
+            }else {
+                // Permission denied.
+                Snackbar.make(
+                    binding.selectionMapFragment,
+                    R.string.permission_denied_explanation, Snackbar.LENGTH_INDEFINITE
+                )
+                    .setAction(R.string.settings) {
+                        // Displays App settings screen.
+                        startActivity(Intent().apply {
+                            action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                            data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        })
+                    }.show()
             }
         }
     }
